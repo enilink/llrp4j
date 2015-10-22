@@ -1,4 +1,4 @@
-= LLRP4J - LLRP for Java
+= LLRP4J - LLRP for Java image:https://travis-ci.org/enilink/llrp4j.svg?branch=master["Build Status", link="https://travis-ci.org/enilink/llrp4j"]
 
 LLRP protocol and networking implementation for Java.
 
