@@ -10,11 +10,27 @@
 	<url>http://github.com/enilink/llrp4j</url>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<llrp4j.version>1.0.0-SNAPSHOT</llrp4j.version>
+		<llrp4j.version>1.0.0</llrp4j.version>
+
 		<slf4j.version>1.7.2</slf4j.version>
 		<logback.version>1.1.1</logback.version>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+
+	<scm>
+		<connection>scm:git:https://github.com/enilink/llrp4j.git</connection>
+		<developerConnection>scm:git:git@github.com:enilink/llrp4j.git</developerConnection>
+		<url>https://github.com/enilink/llrp4j</url>
+		<tag>HEAD</tag>
+	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>bintray-enilink-maven</id>
+			<url>https://api.bintray.com/maven/enilink/maven/llrp4j/;publish=1</url>
+		</repository>
+	</distributionManagement>
 
 	<dependencies>
 		<dependency>
@@ -45,8 +61,49 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<useReleaseProfile>false</useReleaseProfile>
+					<releaseProfiles>release</releaseProfiles>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<modules>
 		<module>llrp4j-core</module>
