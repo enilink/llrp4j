@@ -1,0 +1,16 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>	
+		<groupId>net.enilink.llrp4j</groupId>
+		<artifactId>llrp4j-parent</artifactId>
+		<version>${llrp4j.version}</version>
+	</parent>
+
+	<artifactId>llrp4j-core</artifactId>
+	<packaging>jar</packaging>
+
+	<name>llrp4j-core</name>
+	<url>http://github.com/enilink/llrp4j</url>
+</project>

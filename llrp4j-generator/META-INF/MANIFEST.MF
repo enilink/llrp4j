@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: llrp4j-generator
+Bundle-SymbolicName: net.enilink.llrp4j.generator
+Bundle-Version: 1.0.0.qualifier
+Export-Package: net.enilink.llrp4j.generator
+Import-Package: net.enilink.llrp4j,
+ net.enilink.llrp4j.annotations,
+ net.enilink.llrp4j.types,
+ org.slf4j;version="1.7.2"

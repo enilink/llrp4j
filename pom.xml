@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>net.enilink.llrp4j</groupId>
+	<artifactId>llrp4j-parent</artifactId>
+	<version>${llrp4j.version}</version>
+	<packaging>pom</packaging>
+
+	<url>http://github.com/enilink/llrp4j</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<llrp4j.version>1.0.0-SNAPSHOT</llrp4j.version>
+		<slf4j.version>1.7.2</slf4j.version>
+		<logback.version>1.1.1</logback.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<modules>
+		<module>llrp4j-core</module>
+		<module>llrp4j-generator</module>
+		<module>llrp4j-llrp-module</module>
+		<module>llrp4j-impinj-module</module>
+		<module>llrp4j-net</module>
+	</modules>
+</project>

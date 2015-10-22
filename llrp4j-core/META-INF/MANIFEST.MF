@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: llrp4j-core
+Bundle-SymbolicName: net.enilink.llrp4j.core
+Bundle-Version: 1.0.0.qualifier
+Export-Package: net.enilink.llrp4j,
+ net.enilink.llrp4j.annotations,
+ net.enilink.llrp4j.bitbuffer,
+ net.enilink.llrp4j.types,
+ net.enilink.llrp4j.xml,
+ org.llrp.ltk.schema.core
+Import-Package: org.slf4j;version="1.7.2"

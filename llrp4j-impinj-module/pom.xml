@@ -1,0 +1,72 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>net.enilink.llrp4j</groupId>
+		<artifactId>llrp4j-parent</artifactId>
+		<version>${llrp4j.version}</version>
+	</parent>
+
+	<artifactId>llrp4j-impinj-module</artifactId>
+	<packaging>jar</packaging>
+
+	<name>llrp4j-impinj-module</name>
+	<url>http://github.com/enilink/llrp4j</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<slf4j.version>1.7.2</slf4j.version>
+		<logback.version>1.1.1</logback.version>
+	</properties>
+
+	<dependencies>
+	<dependency>
+			<groupId>net.enilink.llrp4j</groupId>
+			<artifactId>llrp4j-llrp-module</artifactId>
+			<version>${llrp4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.enilink.llrp4j</groupId>
+			<artifactId>llrp4j-core</artifactId>
+			<version>${llrp4j.version}</version>
+		</dependency>
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>generator</id>
+			<dependencies>
+				<dependency>
+					<groupId>net.enilink.llrp4j</groupId>
+					<artifactId>llrp4j-generator</artifactId>
+					<version>${llrp4j.version}</version>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.4.0</version>
+						<executions>
+							<execution>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+								<configuration>
+									<mainClass>net.enilink.llrp4j.generator.Generator</mainClass>
+									<arguments>
+										<argument>${project.basedir}/src/main/resources/impinj/impinjdef.xml</argument>
+										<argument>${project.build.sourceDirectory}</argument>
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

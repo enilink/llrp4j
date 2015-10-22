@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: llrp4j-impinj-module
+Bundle-SymbolicName: net.enilink.llrp4j.modules.impinj
+Bundle-Version: 1.0.0.qualifier
+Export-Package: org.llrp.impinj.enumerations,
+ org.llrp.impinj.messages,
+ org.llrp.impinj.modules,
+ org.llrp.impinj.parameters
+Import-Package: net.enilink.llrp4j,
+ net.enilink.llrp4j.annotations,
+ net.enilink.llrp4j.types,
+ org.llrp.enumerations,
+ org.llrp.interfaces,
+ org.llrp.ltk.schema.core,
+ org.llrp.messages,
+ org.llrp.parameters
