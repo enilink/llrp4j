@@ -4,14 +4,12 @@
 
 	<groupId>net.enilink.llrp4j</groupId>
 	<artifactId>llrp4j-parent</artifactId>
-	<version>${llrp4j.version}</version>
+	<version>1.0.0</version>
 	<packaging>pom</packaging>
 
 	<url>http://github.com/enilink/llrp4j</url>
 
 	<properties>
-		<llrp4j.version>1.0.0</llrp4j.version>
-
 		<slf4j.version>1.7.2</slf4j.version>
 		<logback.version>1.1.1</logback.version>
 
