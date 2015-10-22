@@ -1,0 +1,80 @@
+= LLRP4J - LLRP for Java
+
+LLRP protocol and networking implementation for Java.
+
+LLRP4J implements encoders and decoders for the binary and (proprietary) XML serializations
+of the http://www.gs1.org/epcrfid/epc-rfid-llrp/1-1-0[Low Level Reader Protocol (LLRP)].
+
+LLRP4J consists of the following modules:
+
+* *llrp4j-core:* Encoders and decoders for the binary and XML serializations.
+* *llrp4j-generator:* Java source code generator for annotated POJOs based on XML definition files.
+* *llrp4j-llrp-module:* The LLRP module that provides Java classes for messages and parameters as defined by the LLRP 1.1 standard.
+* *llrp4j-impinj-module:* A placeholder for a custom Impinj module whose definition (impinjdef.xml) must be directly obtained from Impinj due to licensing restrictions.
+* *llrp4j-net:* LLRP client and server implementations using Java NIO.
+
+== Get started
+[source,java]
+----
+final LlrpContext ctx = LlrpContext.create(new LlrpModule());
+LlrpEndpoint endpoint = new LlrpEndpoint() {
+  @Override
+  public void messageReceived(LlrpMessage message) {
+    StringWriter writer = new StringWriter();
+    try {
+      XMLStreamWriter xmlWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(writer);
+      ctx.createXmlEncoder(true).encodeMessage(message, xmlWriter);
+      String xml = writer.toString();
+      System.out.println("RECEIVED:\n" + xml);
+    } catch (Exception e) {
+      // handle exception
+		}
+  }
+
+  @Override
+  public void errorOccured(String message, Throwable cause) {
+  }
+};
+LlrpServer server = LlrpServer.create(ctx, endpoint, "127.0.0.1");
+LlrpClient client = LlrpClient.create(ctx, endpoint, "127.0.0.1");
+
+client.transact(new SET_READER_CONFIG().resetToFactoryDefault(true));
+
+client.close();
+server.close();
+----
+
+== Get the sources
+
+[source,text]
+----
+git clone https://github.com/enilink/llrp4j
+----
+
+== Build LLRP4J
+
+LLRP4J can be build with Maven. You can simply use `mvn -P generator package` to compile and package all modules or `mvn -P generator install` to install them within your local Maven repository.
+
+== Differences to LLRP Toolkit for Java
+
+A popular implementation of LLRP in Java is the http://www.sourceforge.net/projects/llrp-toolkit[LLRP Toolkit (LTK) for Java].
+Its development has been stalled since 2012 and hence we decided to create a new
+LLRP library for Java with the following benefits:
+
+* *Pluggable serializers:* LLRP4J does not generate the serialization logic into the message and parameter classes but 
+uses annotations to declare the respective LLRP data types and encoding rules. This enables serializers to leverage runtime
+reflection for encoding or decoding message and parameter objects.
+* *Dynamic modules:* LLRP4J can be extended with modules at runtime to add custom messages or parameters. LTK for Java had
+to know custom messages or parameters at the generation time of the Java source code for messages and parameters.
+* *Minimal runtime dependencies:* LLRP4J has no additional runtime dependencies other than SLF4J.
+* *Better code generator:* LLRP4J uses https://github.com/phax/jcodemodel[JCodeModel] for source code generation
+that is simpler and better extendable in comparison to the template based approach of LTK for Java.
+
+== License
+
+LLRP4J is licensed under the Eclipse Public License v1.0.
+
+== Acknowledgements
+
+The networking module is based on the http://rox-xmlrpc.sourceforge.net/niotut/[Rox Java NIO Tutorial] and
+the bit buffer implementation is a fork of https://github.com/magik6k/BitBuffer.
