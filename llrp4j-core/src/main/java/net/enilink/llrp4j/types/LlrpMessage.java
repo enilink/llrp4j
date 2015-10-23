@@ -10,11 +10,11 @@ import net.enilink.llrp4j.annotations.LlrpMessageType;
 public abstract class LlrpMessage {
 	protected long messageID;
 
-	public long getMessageID() {
+	public long messageID() {
 		return messageID;
 	}
 
-	public void setMessageID(long messageID) {
+	public void messageID(long messageID) {
 		this.messageID = messageID;
 	}
 

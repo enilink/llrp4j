@@ -77,6 +77,9 @@ class NioClient implements Runnable, AutoCloseable {
 				}
 
 				// Wait for an event one of the registered channels
+				if (!this.selector.isOpen()) {
+					return;
+				}
 				this.selector.select();
 				if (!this.selector.isOpen()) {
 					return;

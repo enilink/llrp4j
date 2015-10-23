@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -229,6 +230,10 @@ public class Generator {
 					}
 					if (name != null) {
 						annotation.param("name", name);
+					}
+					// implement interface
+					if (targetClass.isInterface()) {
+						allowedInInfo.parameterClass._implements(targetClass);
 					}
 				}
 			}
@@ -742,9 +747,11 @@ public class Generator {
 
 			for (Map.Entry<String, JFieldVar> entry : _class.fields().entrySet()) {
 				JFieldVar field = entry.getValue();
-				JInvocation eq = codeModel.ref(Objects.class).staticInvoke("equals");
+				JInvocation eq = (field.type().isArray() ? codeModel.ref(Arrays.class) : codeModel.ref(Objects.class))
+						.staticInvoke("equals");
 				eq.arg(JExpr.refthis(field)).arg(o.ref(field));
 				JBlock then = body._if(eq.not())._then();
+				// for debugging purposes
 				// then.directStatement("System.out.println(\"" +
 				// field.owner().name() + "." + field.name() + "\");");
 				then._return(JExpr.lit(false));
@@ -813,6 +820,10 @@ public class Generator {
 	void choiceParameters(JDefinedClass choiceInterface, List<ChoiceParameterReference> parameters) {
 		for (ChoiceParameterReference ref : parameters) {
 			String type = ref.getType();
+			// skip special custom class
+			if ("Custom".equals(type)) {
+				continue;
+			}
 			parameterClass(type, false)._implements(choiceInterface);
 		}
 	}

@@ -12,6 +12,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.llrp.ltk.schema.core.FieldFormat;
 import org.llrp.ltk.schema.core.FieldType;
 
+import net.enilink.llrp4j.EncodingUtil;
 import net.enilink.llrp4j.LlrpException;
 
 public class XmlTypes {
@@ -81,9 +82,11 @@ public class XmlTypes {
 				return toString((boolean[]) value, format);
 			} else if (value instanceof Object[]) {
 				return toString((Object[]) value, format);
+			} else if (value instanceof byte[]) {
+				return bytesToHex((byte[]) value);
 			}
 		}
-		throw new IllegalArgumentException("Unknown type");
+		throw new IllegalArgumentException("Unknown type: " + value.getClass());
 	}
 
 	private static String toString(BitSet bits, FieldFormat format) {
@@ -100,7 +103,9 @@ public class XmlTypes {
 		for (int i = 0; i < elements.length; i++) {
 			sb.append(toString(elements[i], format)).append(' ');
 		}
-		sb.replace(sb.length() - 1, sb.length(), "");
+		if (sb.length() > 0) {
+			sb.replace(sb.length() - 1, sb.length(), "");
+		}
 		return sb.toString();
 	}
 
@@ -109,7 +114,9 @@ public class XmlTypes {
 		for (int i = 0; i < elements.length; i++) {
 			sb.append(toString(elements[i], format)).append(' ');
 		}
-		sb.replace(sb.length() - 1, sb.length(), "");
+		if (sb.length() > 0) {
+			sb.replace(sb.length() - 1, sb.length(), "");
+		}
 		return sb.toString();
 	}
 
@@ -118,7 +125,9 @@ public class XmlTypes {
 		for (int i = 0; i < elements.length; i++) {
 			sb.append(toString(elements[i], format)).append(' ');
 		}
-		sb.replace(sb.length() - 1, sb.length(), "");
+		if (sb.length() > 0) {
+			sb.replace(sb.length() - 1, sb.length(), "");
+		}
 		return sb.toString();
 	}
 
@@ -203,8 +212,7 @@ public class XmlTypes {
 		case U_96:
 			return new BigInteger(s, radix);
 		case BYTES_TO_END: {
-			// TODO implement
-			return null;
+			return hexStringToByteArray(s);
 		}
 		default:
 		}
@@ -240,5 +248,29 @@ public class XmlTypes {
 			elements[i] = (BigInteger) fromString(fieldType, format, strings[i]);
 		}
 		return elements;
+	}
+
+	final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
+	public static String bytesToHex(byte[] bytes) {
+		char[] hexChars = new char[bytes.length * 2];
+		for (int j = 0; j < bytes.length; j++) {
+			int v = bytes[j] & 0xFF;
+			hexChars[j * 2] = hexArray[v >>> 4];
+			hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+		}
+		return new String(hexChars);
+	}
+
+	public static byte[] hexStringToByteArray(String s) {
+		if ((s.length() % 2) != 0) {
+			s = "0" + s;
+		}
+		int len = s.length();
+		byte[] data = new byte[len / 2];
+		for (int i = 0; i < len; i += 2) {
+			data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i + 1), 16));
+		}
+		return data;
 	}
 }

@@ -3,12 +3,12 @@ package net.enilink.llrp4j;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class Module {
-	protected Set<Class<?>> classes = new HashSet<>();
+	protected Set<Class<?>> classes = new LinkedHashSet<>();
 	protected Map<String, String> namespaces = new HashMap<>();
 
 	public Module() {
@@ -18,26 +18,31 @@ public class Module {
 		this.classes.addAll(classes);
 	}
 
-	public void addNamespace(String prefix, String uri) {
+	public Module addNamespace(String prefix, String uri) {
 		namespaces.put(prefix, uri);
+		return this;
 	}
 
-	public void addClass(Class<?> clazz) {
+	public Module addClass(Class<?> clazz) {
 		this.classes.add(clazz);
+		return this;
 	}
 
-	public void addClasses(Class<?>... classes) {
+	public Module addClasses(Class<?>... classes) {
 		for (Class<?> clazz : classes) {
 			this.classes.add(clazz);
 		}
+		return this;
 	}
 
-	public void addClasses(Collection<Class<?>> classes) {
+	public Module addClasses(Collection<Class<?>> classes) {
 		this.classes.addAll(classes);
+		return this;
 	}
 
-	public void include(Module other) {
+	public Module include(Module other) {
 		this.classes.addAll(other.classes);
+		return this;
 	}
 
 	public Set<Class<?>> getClasses() {

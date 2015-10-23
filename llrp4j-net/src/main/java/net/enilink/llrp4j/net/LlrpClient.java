@@ -12,36 +12,33 @@ public class LlrpClient implements Closeable {
 	private NioClient nioClient;
 	private IoHandler handler;
 
-	protected LlrpClient(LlrpContext context, LlrpEndpoint endpoint, String host, int port, int timeout)
-			throws IOException {
-		handler = createHandler(context, endpoint);
+	protected LlrpClient(LlrpContext context, String host, int port, int timeout) throws IOException {
+		handler = createHandler(context);
 		nioClient = new NioClient(InetAddress.getByName(host), port, handler);
 		new Thread(nioClient).start();
 		handler.awaitConnectionAttemptEvent(timeout);
 	}
 
-	private IoHandler createHandler(LlrpContext context, LlrpEndpoint endpoint) {
+	private IoHandler createHandler(LlrpContext context) {
 		IoSession ioSession = new IoSession() {
 			@Override
 			public void send(ByteBuffer data) {
 				nioClient.send(data);
 			}
 		};
-		return new IoHandler(context, endpoint, ioSession, true, false);
+		return new IoHandler(context, ioSession, true, false);
 	}
 
-	public static LlrpClient create(LlrpContext context, LlrpEndpoint endpoint, String host) throws IOException {
-		return create(context, endpoint, host, LlrpConstants.DEFAULT_PORT);
+	public static LlrpClient create(LlrpContext context, String host) throws IOException {
+		return create(context, host, LlrpConstants.DEFAULT_PORT);
 	}
 
-	public static LlrpClient create(LlrpContext context, LlrpEndpoint endpoint, String host, int port)
-			throws IOException {
-		return create(context, endpoint, host, LlrpConstants.DEFAULT_PORT, LlrpConstants.DEFAULT_TIMEOUT);
+	public static LlrpClient create(LlrpContext context, String host, int port) throws IOException {
+		return create(context, host, LlrpConstants.DEFAULT_PORT, LlrpConstants.DEFAULT_TIMEOUT);
 	}
 
-	public static LlrpClient create(LlrpContext context, LlrpEndpoint endpoint, String host, int port, int timeout)
-			throws IOException {
-		return new LlrpClient(context, endpoint, host, port, timeout);
+	public static LlrpClient create(LlrpContext context, String host, int port, int timeout) throws IOException {
+		return new LlrpClient(context, host, port, timeout);
 	}
 
 	public void send(LlrpMessage message) {
@@ -54,6 +51,11 @@ public class LlrpClient implements Closeable {
 
 	public LlrpMessage transact(LlrpMessage message) throws InterruptedException {
 		return transact(message, LlrpConstants.DEFAULT_TIMEOUT);
+	}
+
+	public LlrpClient endpoint(LlrpEndpoint endpoint) {
+		handler.setEndpoint(endpoint);
+		return this;
 	}
 
 	public void close() throws IOException {

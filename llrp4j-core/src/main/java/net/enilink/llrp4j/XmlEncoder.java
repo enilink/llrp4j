@@ -153,40 +153,21 @@ public class XmlEncoder {
 			throws Exception {
 		boolean isList = parameter instanceof List;
 		List<?> elements = isList ? (List<?>) parameter : Arrays.asList(parameter);
-		Annotation firstParameterType = parameterType(elements.get(0).getClass());
-		int firstTypeNum = typeNum(firstParameterType);
-		if (isList && firstTypeNum < 128 && properties(firstParameterType, context).length == 1) {
-			// inline TV parameters as text
-			StringBuilder sb = new StringBuilder();
-			writer.writeStartElement(context.xmlNamespace(parameter.getClass()), localName(parameter.getClass()) + "s");
+		for (Object element : elements) {
+			writer.writeStartElement(context.xmlNamespace(element.getClass()), localName(element.getClass()));
 			if (writeNamespaces) {
 				writeNamespaces(writer);
 			}
-			for (Object element : elements) {
-				for (Property property : properties(firstParameterType, context)) {
-					Object fieldValue = property.field.get(element);
-					sb.append(encodeField(property.field, fieldValue, null, null)).append(' ');
-				}
-				sb.replace(sb.length() - 1, sb.length(), "");
+			Annotation parameterType = parameterType(element.getClass());
+			// TV Parameters have type number from 0 - 127, TLV from 128 -
+			// 2047
+			int typeNum = typeNum(parameterType);
+			if (typeNum < 128) {
+				encodeTVParameter(parameterType, element, writer);
+			} else {
+				encodeTLVParameter(parameterType, element, writer);
 			}
 			writer.writeEndElement();
-		} else {
-			for (Object element : elements) {
-				writer.writeStartElement(context.xmlNamespace(element.getClass()), localName(element.getClass()));
-				if (writeNamespaces) {
-					writeNamespaces(writer);
-				}
-				Annotation parameterType = parameterType(element.getClass());
-				// TV Parameters have type number from 0 - 127, TLV from 128 -
-				// 2047
-				int typeNum = typeNum(parameterType);
-				if (typeNum < 128) {
-					encodeTVParameter(parameterType, element, writer);
-				} else {
-					encodeTLVParameter(parameterType, element, writer);
-				}
-				writer.writeEndElement();
-			}
 		}
 	}
 

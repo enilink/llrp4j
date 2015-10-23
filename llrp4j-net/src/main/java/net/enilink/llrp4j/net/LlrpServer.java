@@ -22,8 +22,8 @@ public class LlrpServer implements Closeable {
 
 	private volatile SocketChannel channel;
 
-	public LlrpServer(LlrpContext context, LlrpEndpoint endpoint, String host, int port) throws IOException {
-		handler = createHandler(context, endpoint);
+	public LlrpServer(LlrpContext context, String host, int port) throws IOException {
+		handler = createHandler(context);
 		nioServer = new NioServer(InetAddress.getByName(host), port, handler) {
 			@Override
 			protected SocketChannel acceptChannel(ServerSocketChannel serverSocketChannel) throws IOException {
@@ -52,23 +52,22 @@ public class LlrpServer implements Closeable {
 		new Thread(nioServer).start();
 	}
 
-	private IoHandler createHandler(LlrpContext context, LlrpEndpoint endpoint) {
+	private IoHandler createHandler(LlrpContext context) {
 		IoSession ioSession = new IoSession() {
 			@Override
 			public void send(ByteBuffer data) {
-				nioServer.send(null, data);
+				nioServer.send(channel, data);
 			}
 		};
-		return new IoHandler(context, endpoint, ioSession, true, false);
+		return new IoHandler(context, ioSession, true, false);
 	}
 
-	public static LlrpServer create(LlrpContext context, LlrpEndpoint endpoint, String host) throws IOException {
-		return create(context, endpoint, host, LlrpConstants.DEFAULT_PORT);
+	public static LlrpServer create(LlrpContext context, String host) throws IOException {
+		return create(context, host, LlrpConstants.DEFAULT_PORT);
 	}
 
-	public static LlrpServer create(LlrpContext context, LlrpEndpoint endpoint, String host, int port)
-			throws IOException {
-		return new LlrpServer(context, endpoint, host, port);
+	public static LlrpServer create(LlrpContext context, String host, int port) throws IOException {
+		return new LlrpServer(context, host, port);
 	}
 
 	public void send(LlrpMessage message) {
@@ -81,6 +80,11 @@ public class LlrpServer implements Closeable {
 
 	public LlrpMessage transact(LlrpMessage message) throws InterruptedException {
 		return transact(message, LlrpConstants.DEFAULT_TIMEOUT);
+	}
+
+	public LlrpServer setEndpoint(LlrpEndpoint endpoint) {
+		handler.setEndpoint(endpoint);
+		return this;
 	}
 
 	public void close() throws IOException {

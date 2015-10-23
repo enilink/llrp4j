@@ -147,20 +147,7 @@ public class XmlDecoder {
 		private Object parseParameter(Class<?> expectedType, boolean list, boolean required) throws Exception {
 			Annotation parameterType = parameterType(expectedType);
 			if (parameterType != null && typeNum(parameterType) < 128) {
-				if (list && parameterType != null && typeNum(parameterType) < 128
-						&& properties(parameterType, context).length == 1) {
-					// parse inlined param
-					List<Object> elements = new ArrayList<>();
-					String[] values = parseStringValue().split("\\s+");
-					for (String value : values) {
-						for (Property p : properties(parameterType, context)) {
-							elements.add(parseField(p.field, value));
-						}
-					}
-					return elements;
-				} else {
-					return parseTVParameter(parameterType, expectedType);
-				}
+				return parseTVParameter(parameterType, expectedType);
 			} else {
 				return parseTLVParameter(parameterType, expectedType, required);
 			}

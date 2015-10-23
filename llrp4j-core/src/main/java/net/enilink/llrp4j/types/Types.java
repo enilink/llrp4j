@@ -65,14 +65,16 @@ public class Types {
 			return;
 		case U_64: {
 			BigInteger l = (BigInteger) value;
-			buffer.putLong(l.shiftRight(32).longValue(), 32);
-			buffer.putLong(l.and(BigInteger.valueOf((1L << 32) - 1)).longValue(), 32);
+			BigInteger mask = BigInteger.valueOf((1L << 32) - 1);
+			buffer.putLong(l.shiftRight(32).and(mask).longValue(), 32);
+			buffer.putLong(l.and(mask).longValue(), 32);
 			return;
 		}
 		case S_64: {
 			BigInteger l = (BigInteger) value;
-			buffer.putLong(l.shiftRight(32).longValue(), 32);
-			buffer.putLong(l.and(BigInteger.valueOf((1L << 32) - 1)).longValue(), 32);
+			BigInteger mask = BigInteger.valueOf((1L << 32) - 1);
+			buffer.putLong(l.shiftRight(32).and(mask).longValue(), 32);
+			buffer.putLong(l.and(mask).longValue(), 32);
 			return;
 		}
 		case U_64_V:
@@ -83,9 +85,11 @@ public class Types {
 			return;
 		case U_96: {
 			BigInteger l = (BigInteger) value;
-			buffer.putLong(l.shiftRight(64).longValue(), 32);
-			buffer.putLong(l.shiftRight(32).and(BigInteger.valueOf((1L << 32) - 1)).longValue(), 32);
-			buffer.putLong(l.and(BigInteger.valueOf((1L << 32) - 1)).longValue(), 32);
+			BigInteger mask = BigInteger.valueOf((1L << 32) - 1);
+			buffer.putLong(l.shiftRight(64).and(mask).longValue(), 32);
+			buffer.putLong(l.shiftRight(32).and(mask).longValue(), 32);
+			buffer.putLong(l.and(mask).longValue(), 32);
+			return;
 		}
 		case BYTES_TO_END:
 			buffer.put((byte[]) value);
@@ -186,7 +190,7 @@ public class Types {
 			return first.shiftLeft(32).add(second).shiftLeft(32).add(third);
 		}
 		case BYTES_TO_END: {
-			int byteLength = (buffer.limit() - buffer.position()) / 8;
+			int byteLength = (buffer.size() - buffer.position()) / 8;
 			byte[] bytes = new byte[byteLength];
 			buffer.get(bytes);
 			return bytes;

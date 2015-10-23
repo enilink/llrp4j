@@ -1,4 +1,4 @@
-package net.enilink.llrp4j.llrp.test;
+package org.llrp.test;
 
 import java.io.StringReader;
 import java.io.StringWriter;

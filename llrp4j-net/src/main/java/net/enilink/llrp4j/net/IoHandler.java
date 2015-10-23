@@ -1,5 +1,6 @@
 package net.enilink.llrp4j.net;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.HashMap;
@@ -25,7 +26,7 @@ import net.enilink.llrp4j.types.LlrpMessage;
 class IoHandler {
 	class Message {
 		int length = -1;
-		ByteBuffer buffer = ByteBuffer.allocate(2048);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	}
 
 	/**
@@ -47,6 +48,16 @@ class IoHandler {
 		}
 	}
 
+	private static LlrpEndpoint NOOP_ENDPOINT = new LlrpEndpoint() {
+		@Override
+		public void messageReceived(LlrpMessage message) {
+		}
+
+		@Override
+		public void errorOccured(String message, Throwable cause) {
+		}
+	};
+
 	private static Logger log = LoggerFactory.getLogger(IoHandler.class);
 
 	private Map<Long, FutureResponse> syncMessages = new ConcurrentHashMap<>();
@@ -59,14 +70,12 @@ class IoHandler {
 
 	private LlrpContext context;
 
-	private LlrpEndpoint endpoint;
+	private volatile LlrpEndpoint endpoint = NOOP_ENDPOINT;
 
 	private IoSession ioSession;
 
-	public IoHandler(LlrpContext context, LlrpEndpoint endpoint, IoSession ioSession, boolean keepAliveAck,
-			boolean keepAliveForward) {
+	public IoHandler(LlrpContext context, IoSession ioSession, boolean keepAliveAck, boolean keepAliveForward) {
 		this.context = context;
-		this.endpoint = endpoint;
 		this.ioSession = ioSession;
 		this.keepAliveAck = keepAliveAck;
 		this.keepAliveForward = keepAliveForward;
@@ -74,25 +83,25 @@ class IoHandler {
 
 	public void processData(SocketChannel channel, byte[] data) {
 		Message message = currentMessage(channel);
-		ByteBuffer b = message.buffer;
+		ByteArrayOutputStream b = message.baos;
 		int offset = 0;
 		if (message.length <= 0) {
-			offset = Math.min(6 - b.position(), data.length);
-			b.put(data, 0, offset);
-			if (b.position() >= 6) {
-				BitBuffer bits = BitBuffer.wrap(b.array());
+			offset = Math.min(6 - b.size(), data.length);
+			b.write(data, 0, offset);
+			if (b.size() >= 6) {
+				BitBuffer bits = BitBuffer.wrap(b.toByteArray());
 				// skip reserved bits (3), version (3) and message type (10)
 				bits.position(16);
 				message.length = (int) bits.getLongUnsigned(32);
 			}
 		}
 		if (message.length > 0) {
-			int count = Math.min(message.length - b.position(), data.length - offset);
-			b.put(data, offset, count);
-			if (offset + count <= data.length) {
+			int count = Math.min(message.length - b.size(), data.length - offset);
+			b.write(data, offset, count);
+			if (b.size() == message.length) {
 				messages.remove(channel);
-				
-				BitBuffer messageData = BitBuffer.wrap(b.array()).slice(0, message.length * 8);
+
+				BitBuffer messageData = BitBuffer.wrap(b.toByteArray()).slice(0, message.length * 8);
 				try {
 					LlrpMessage m = context.createBinaryDecoder().decodeMessage(messageData);
 					handleMessage(m);
@@ -122,7 +131,7 @@ class IoHandler {
 			throw new IllegalArgumentException("Message does not expect return message");
 		}
 		FutureResponse response = new FutureResponse();
-		syncMessages.put(message.getMessageID(), response);
+		syncMessages.put(message.messageID(), response);
 		send(message);
 		return response.get(timeout);
 	}
@@ -148,14 +157,16 @@ class IoHandler {
 			ConnectionAttemptEvent connectionAttemptEvent = ((READER_EVENT_NOTIFICATION) message)
 					.getReaderEventNotificationData().getConnectionAttemptEvent();
 			if (connectionAttemptEvent != null) {
-				connectionAttemptEventQueue.add(connectionAttemptEvent);
+				if (connectionAttemptEventQueue.isEmpty()) {
+					connectionAttemptEventQueue.add(connectionAttemptEvent);
+				}
 				endpoint.messageReceived(message);
 				return;
 			}
 		}
 
 		// send message only if not already handled by synchronous call
-		FutureResponse reponse = syncMessages.remove(message.getMessageID());
+		FutureResponse reponse = syncMessages.remove(message.messageID());
 		if (reponse == null) {
 			log.debug("Calling messageReceived of endpoint ... ");
 			endpoint.messageReceived(message);
@@ -198,5 +209,9 @@ class IoHandler {
 		} catch (InterruptedException e) {
 			throw new LlrpException(e);
 		}
+	}
+
+	protected void setEndpoint(LlrpEndpoint endpoint) {
+		this.endpoint = endpoint == null ? NOOP_ENDPOINT : endpoint;
 	}
 }

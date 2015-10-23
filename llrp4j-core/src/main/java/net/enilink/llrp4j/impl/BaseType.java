@@ -13,7 +13,7 @@ public class BaseType {
 		this.reservedBits = reservedBits;
 	}
 
-	public Property[] properties() {
+	public synchronized Property[] properties() {
 		if (properties == null) {
 			LlrpProperties annotation = typeClass.getAnnotation(LlrpProperties.class);
 			properties = new Property[annotation.value().length];

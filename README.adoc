@@ -28,15 +28,15 @@ LlrpEndpoint endpoint = new LlrpEndpoint() {
       System.out.println("RECEIVED:\n" + xml);
     } catch (Exception e) {
       // handle exception
-		}
+    }
   }
 
   @Override
   public void errorOccured(String message, Throwable cause) {
   }
 };
-LlrpServer server = LlrpServer.create(ctx, endpoint, "127.0.0.1");
-LlrpClient client = LlrpClient.create(ctx, endpoint, "127.0.0.1");
+LlrpServer server = LlrpServer.create(ctx, "127.0.0.1").setEndpoint(endpoint);
+LlrpClient client = LlrpClient.create(ctx, "127.0.0.1").setEndpoint(endpoint);
 
 client.transact(new SET_READER_CONFIG().resetToFactoryDefault(true));
 

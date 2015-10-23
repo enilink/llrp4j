@@ -58,7 +58,7 @@ public class BinaryDecoder {
 		// Message ID 32 bits (48 .. 79)
 		long messageID = buffer.getLongUnsigned(32);
 
-		BaseType messageType;
+		BaseType messageType = null;
 		if (typeNum == 1023) {
 			// custom message
 
@@ -68,11 +68,16 @@ public class BinaryDecoder {
 			int subtype = buffer.getIntUnsigned(8);
 
 			messageType = context.customMessageTypes.get(new CustomKey(vendor, subtype));
-		} else {
+			if (messageType == null) {
+				// rewind vendor and subtype
+				buffer.position(buffer.position() - 40);
+			}
+		}
+		if (messageType == null) {
 			messageType = context.messageTypes.get(typeNum);
 		}
 		LlrpMessage message = (LlrpMessage) messageType.typeClass.newInstance();
-		message.setMessageID(messageID);
+		message.messageID(messageID);
 
 		// remove reserved bits
 		decodeReserved(messageType, buffer);
@@ -134,7 +139,7 @@ public class BinaryDecoder {
 		Object parameter = null;
 		List<Object> elements = null;
 		int count = 0;
-		while (buffer.position() + 8 < bufferSize) {
+		while (buffer.position() < bufferSize) {
 			boolean tvParameter = buffer.getBoolean();
 			buffer.position(buffer.position() - 1);
 			if (tvParameter) {
@@ -144,8 +149,7 @@ public class BinaryDecoder {
 			}
 			if (parameter == null) {
 				if (count == 0 && required) {
-					throw new LlrpException(
-							"Missing required parameter of type '" + expectedType.getName() + "'.");
+					throw new LlrpException("Missing required parameter of type '" + expectedType.getName() + "'.");
 				}
 				break;
 			}
@@ -207,7 +211,7 @@ public class BinaryDecoder {
 		boolean isCustom = typeNum == 1023;
 		// Parameter Length 16 bits (16 .. 31)
 		int length = buffer.getIntUnsigned(16);
-
+		
 		Object parameter = null;
 		if (isCustom) {
 			// Vendor ID 32 bits

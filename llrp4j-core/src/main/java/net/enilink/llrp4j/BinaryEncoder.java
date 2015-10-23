@@ -62,7 +62,7 @@ public class BinaryEncoder {
 		// Message Length 32 bits (16 .. 47) - add as placeholder here
 		buffer.putInt(0, 32);
 		// Message ID 32 bits (48 .. 79)
-		buffer.putLong(message.getMessageID(), 32);
+		buffer.putLong(message.messageID(), 32);
 
 		if (messageType instanceof CustomMessage) {
 			// Vendor ID 32 bits
@@ -89,7 +89,7 @@ public class BinaryEncoder {
 
 	private void encodeProperties(Object o, Property[] properties, BitBuffer buffer) {
 		try {
-			for (Property property : properties) {
+			for (final Property property : properties) {
 				Object fieldValue = property.field.get(o);
 				boolean list = List.class.isAssignableFrom(property.field.getType());
 				boolean empty = fieldValue == null || list && ((List<?>) fieldValue).isEmpty();
