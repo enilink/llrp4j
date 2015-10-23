@@ -35,8 +35,8 @@ LlrpEndpoint endpoint = new LlrpEndpoint() {
   public void errorOccured(String message, Throwable cause) {
   }
 };
-LlrpServer server = LlrpServer.create(ctx, "127.0.0.1").setEndpoint(endpoint);
-LlrpClient client = LlrpClient.create(ctx, "127.0.0.1").setEndpoint(endpoint);
+LlrpServer server = LlrpServer.create(ctx, "127.0.0.1").endpoint(endpoint);
+LlrpClient client = LlrpClient.create(ctx, "127.0.0.1").endpoint(endpoint);
 
 client.transact(new SET_READER_CONFIG().resetToFactoryDefault(true));
 
