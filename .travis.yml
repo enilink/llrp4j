@@ -2,7 +2,7 @@ script: mvn -P generator test
 
 deploy:
 - provider: script
-  script: mvn package deploy -s .travis.maven-settings.xml -P generator -P release
+  script: mvn package deploy -s ./.travis.maven-settings.xml -P generator -P release
   on:
     tags: true
 
