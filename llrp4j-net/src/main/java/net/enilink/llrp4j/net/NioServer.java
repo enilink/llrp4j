@@ -67,16 +67,16 @@ class NioServer implements Runnable {
 	}
 
 	public void run() {
-		while (true) {
+		while (selector.isOpen()) {
 			try {
 				// Process any pending changes
-				synchronized (this.pendingChanges) {
-					Iterator<ChangeRequest> changes = this.pendingChanges.iterator();
+				synchronized (pendingChanges) {
+					Iterator<ChangeRequest> changes = pendingChanges.iterator();
 					while (changes.hasNext()) {
 						ChangeRequest change = changes.next();
 						switch (change.type) {
 						case ChangeRequest.CHANGEOPS:
-							SelectionKey key = change.socket.keyFor(this.selector);
+							SelectionKey key = change.socket.keyFor(selector);
 							key.interestOps(change.ops);
 							break;
 						case ChangeRequest.CLOSE:
@@ -88,13 +88,13 @@ class NioServer implements Runnable {
 				}
 
 				// Wait for an event one of the registered channels
-				this.selector.select();
-				if (!this.selector.isOpen()) {
+				selector.select();
+				if (!selector.isOpen()) {
 					return;
 				}
 
 				// Iterate over the set of keys for which events are available
-				Iterator<SelectionKey> selectedKeys = this.selector.selectedKeys().iterator();
+				Iterator<SelectionKey> selectedKeys = selector.selectedKeys().iterator();
 				while (selectedKeys.hasNext()) {
 					SelectionKey key = selectedKeys.next();
 					selectedKeys.remove();

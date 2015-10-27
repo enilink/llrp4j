@@ -40,7 +40,12 @@ class NioClient implements Runnable, AutoCloseable {
 		this.port = port;
 		this.handler = handler;
 		this.selector = initSelector();
-		this.channel = initConnection(true);
+		try {
+			this.channel = initConnection(true);
+		} catch (IOException e) {
+			close();
+			throw e;
+		}
 	}
 
 	public void send(ByteBuffer data) {
@@ -56,7 +61,7 @@ class NioClient implements Runnable, AutoCloseable {
 	}
 
 	public void run() {
-		while (true) {
+		while (selector.isOpen()) {
 			try {
 				// Process any pending changes
 				synchronized (this.pendingChanges) {
@@ -65,11 +70,11 @@ class NioClient implements Runnable, AutoCloseable {
 						ChangeRequest change = changes.next();
 						switch (change.type) {
 						case ChangeRequest.CHANGEOPS:
-							SelectionKey key = change.socket.keyFor(this.selector);
+							SelectionKey key = change.socket.keyFor(selector);
 							key.interestOps(change.ops);
 							break;
 						case ChangeRequest.REGISTER:
-							change.socket.register(this.selector, change.ops);
+							change.socket.register(selector, change.ops);
 							break;
 						}
 					}
@@ -77,16 +82,13 @@ class NioClient implements Runnable, AutoCloseable {
 				}
 
 				// Wait for an event one of the registered channels
-				if (!this.selector.isOpen()) {
-					return;
-				}
-				this.selector.select();
-				if (!this.selector.isOpen()) {
+				selector.select();
+				if (!selector.isOpen()) {
 					return;
 				}
 
 				// Iterate over the set of keys for which events are available
-				Iterator<SelectionKey> selectedKeys = this.selector.selectedKeys().iterator();
+				Iterator<SelectionKey> selectedKeys = selector.selectedKeys().iterator();
 				while (selectedKeys.hasNext()) {
 					SelectionKey key = selectedKeys.next();
 					selectedKeys.remove();
