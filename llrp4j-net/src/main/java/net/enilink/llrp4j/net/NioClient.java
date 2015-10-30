@@ -73,7 +73,7 @@ class NioClient implements Runnable, AutoCloseable {
 						switch (change.type) {
 						case ChangeRequest.CHANGEOPS:
 							SelectionKey key = change.socket.keyFor(selector);
-							if (key.isValid()) {
+							if (key != null && key.isValid()) {
 								key.interestOps(change.ops);
 							}
 							break;
@@ -197,7 +197,12 @@ class NioClient implements Runnable, AutoCloseable {
 		}
 
 		// Kick off connection establishment
-		socketChannel.connect(new InetSocketAddress(this.hostAddress, this.port));
+		try {
+			socketChannel.connect(new InetSocketAddress(this.hostAddress, this.port));
+		} catch (IOException e) {
+			socketChannel.close();
+			throw e;
+		}
 
 		// set non-blocking mode
 		if (connectBlocking) {

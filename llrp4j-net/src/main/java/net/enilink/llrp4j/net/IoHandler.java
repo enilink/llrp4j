@@ -208,11 +208,9 @@ class IoHandler {
 				if (status == ConnectionAttemptStatusType.Success) {
 					log.info("LLRP reader reported successfull connection attempt (ConnectionAttemptEvent.Status = "
 							+ status.toString() + ")");
-					System.out.println(status.toString());
 				} else {
 					log.info("LLRP reader reported failed connection attempt (ConnectionAttemptStatus = "
 							+ status.toString() + ")");
-					System.out.println(status.toString());
 					throw new LlrpException(status.toString());
 				}
 			} else {
