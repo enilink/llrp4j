@@ -14,7 +14,7 @@ public class LlrpClient implements Closeable {
 
 	protected LlrpClient(LlrpContext context, String host, int port, int timeout) throws IOException {
 		handler = createHandler(context);
-		nioClient = new NioClient(InetAddress.getByName(host), port, handler);
+		nioClient = new NioClient(InetAddress.getByName(host), port, handler, timeout);
 		new Thread(nioClient).start();
 		handler.awaitConnectionAttemptEvent(timeout);
 	}

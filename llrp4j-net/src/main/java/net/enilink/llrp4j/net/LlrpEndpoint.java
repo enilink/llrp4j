@@ -20,23 +20,25 @@ package net.enilink.llrp4j.net;
 import net.enilink.llrp4j.types.LlrpMessage;
 
 /**
-	 * The LLRPEndpoint interface needs to be implemented by any class
-	 * that wants to receive LLRP messages asynchronously. 
+ * The LLRPEndpoint interface needs to be implemented by any class that wants to
+ * receive LLRP messages asynchronously.
  */
-
 public interface LlrpEndpoint {
 
 	/**
-	 * The  messageReceived.message is called by the LLRPIoHandler whenever
-	 * an LLRP message is received asynchrounly.
+	 * The messageReceived.message is called by the LLRPIoHandler whenever an
+	 * LLRP message is received asynchrounly.
 	 * 
-	 * @param message LLRPmessage received
+	 * @param message
+	 *            LLRPmessage received
 	 */
-	public void messageReceived(LlrpMessage message);
+	void messageReceived(LlrpMessage message);
 
 	/**
-	 * The method errorOccurred is called by the LLRPIoHandler whenever an error occurred.
-	 * @param message 
+	 * The method errorOccurred is called by the LLRPIoHandler whenever an error
+	 * occurred.
+	 * 
+	 * @param message
 	 */
-	public void errorOccured(String message, Throwable cause);
+	void errorOccured(String message, Throwable cause);
 }

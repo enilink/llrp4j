@@ -35,13 +35,13 @@ class NioClient implements Runnable, AutoCloseable {
 
 	private SocketChannel channel;
 
-	public NioClient(InetAddress hostAddress, int port, IoHandler handler) throws IOException {
+	public NioClient(InetAddress hostAddress, int port, IoHandler handler, int timeout) throws IOException {
 		this.hostAddress = hostAddress;
 		this.port = port;
 		this.handler = handler;
 		this.selector = initSelector();
 		try {
-			this.channel = initConnection(true);
+			this.channel = initConnection(true, timeout);
 		} catch (IOException e) {
 			close();
 			throw e;
@@ -50,10 +50,12 @@ class NioClient implements Runnable, AutoCloseable {
 
 	public void send(ByteBuffer data) {
 		// Indicate we want the interest ops set changed
-		this.pendingChanges.add(new ChangeRequest(channel, ChangeRequest.CHANGEOPS, SelectionKey.OP_WRITE));
+		synchronized (this.pendingChanges) {
+			this.pendingChanges.add(new ChangeRequest(channel, ChangeRequest.CHANGEOPS, SelectionKey.OP_WRITE));
+		}
 
 		// And queue the data we want written
-		this.pendingData.add(data);
+		pendingData.add(data);
 
 		// Finally, wake up our selecting thread so it can make the required
 		// changes
@@ -71,7 +73,9 @@ class NioClient implements Runnable, AutoCloseable {
 						switch (change.type) {
 						case ChangeRequest.CHANGEOPS:
 							SelectionKey key = change.socket.keyFor(selector);
-							key.interestOps(change.ops);
+							if (key.isValid()) {
+								key.interestOps(change.ops);
+							}
 							break;
 						case ChangeRequest.REGISTER:
 							change.socket.register(selector, change.ops);
@@ -149,17 +153,17 @@ class NioClient implements Runnable, AutoCloseable {
 		SocketChannel socketChannel = (SocketChannel) key.channel();
 
 		// Write until there's no more data ...
-		while (!this.pendingData.isEmpty()) {
-			ByteBuffer buf = (ByteBuffer) this.pendingData.element();
+		while (!pendingData.isEmpty()) {
+			ByteBuffer buf = (ByteBuffer) pendingData.element();
 			socketChannel.write(buf);
 			if (buf.remaining() > 0) {
 				// ... or the socket's buffer fills up
 				break;
 			}
-			this.pendingData.remove();
+			pendingData.remove();
 		}
 
-		if (this.pendingData.isEmpty()) {
+		if (pendingData.isEmpty()) {
 			// We wrote away all data, so we're no longer interested
 			// in writing on this socket. Switch back to waiting for
 			// data.
@@ -184,10 +188,12 @@ class NioClient implements Runnable, AutoCloseable {
 		key.interestOps(SelectionKey.OP_WRITE);
 	}
 
-	private SocketChannel initConnection(boolean connectBlocking) throws IOException {
+	private SocketChannel initConnection(boolean connectBlocking, int timeout) throws IOException {
 		SocketChannel socketChannel = SocketChannel.open();
 		if (!connectBlocking) {
 			socketChannel.configureBlocking(false);
+		} else {
+			socketChannel.socket().setSoTimeout(timeout);
 		}
 
 		// Kick off connection establishment
@@ -195,6 +201,7 @@ class NioClient implements Runnable, AutoCloseable {
 
 		// set non-blocking mode
 		if (connectBlocking) {
+			socketChannel.socket().setSoTimeout(0);
 			socketChannel.configureBlocking(false);
 			socketChannel.register(this.selector, SelectionKey.OP_CONNECT);
 			synchronized (this.pendingChanges) {

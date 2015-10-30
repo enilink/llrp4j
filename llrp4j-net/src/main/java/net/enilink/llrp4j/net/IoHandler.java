@@ -122,10 +122,17 @@ class IoHandler {
 	}
 
 	protected void send(LlrpMessage message) {
+		if (log.isDebugEnabled()) {
+			log.debug("send {} id={}", message.getClass().getSimpleName(), message.messageID());
+		}
 		ioSession.send(encodeMessage(message));
 	}
 
 	public LlrpMessage transact(LlrpMessage message, long timeout) throws InterruptedException {
+		if (log.isDebugEnabled()) {
+			log.debug("transact {} id={}", message.getClass().getSimpleName(), message.messageID());
+		}
+
 		Class<?> returnMessageType = message.getResponseType();
 		if (void.class.equals(returnMessageType)) {
 			throw new IllegalArgumentException("Message does not expect return message");
@@ -143,6 +150,9 @@ class IoHandler {
 	}
 
 	protected void handleMessage(LlrpMessage message) {
+		if (log.isDebugEnabled()) {
+			log.debug("received {} id={}", message.getClass().getSimpleName(), message.messageID());
+		}
 		if (message instanceof KEEPALIVE) {
 			if (keepAliveForward) {
 				endpoint.messageReceived(message);
@@ -198,9 +208,11 @@ class IoHandler {
 				if (status == ConnectionAttemptStatusType.Success) {
 					log.info("LLRP reader reported successfull connection attempt (ConnectionAttemptEvent.Status = "
 							+ status.toString() + ")");
+					System.out.println(status.toString());
 				} else {
 					log.info("LLRP reader reported failed connection attempt (ConnectionAttemptStatus = "
 							+ status.toString() + ")");
+					System.out.println(status.toString());
 					throw new LlrpException(status.toString());
 				}
 			} else {
