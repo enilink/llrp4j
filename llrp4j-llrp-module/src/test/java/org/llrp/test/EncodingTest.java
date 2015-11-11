@@ -4,7 +4,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.List;
 
 import javax.xml.stream.XMLInputFactory;
@@ -30,6 +29,7 @@ import net.enilink.llrp4j.LlrpContext;
 import net.enilink.llrp4j.XmlDecoder;
 import net.enilink.llrp4j.XmlEncoder;
 import net.enilink.llrp4j.bitbuffer.BitBuffer;
+import net.enilink.llrp4j.types.BitList;
 import net.enilink.llrp4j.types.LlrpMessage;
 import net.enilink.llrp4j.xml.IndentingXMLStreamWriter;
 
@@ -46,7 +46,7 @@ public class EncodingTest {
 		spec.accessSpecID(2).antennaID(3).protocolID(AirProtocols.EPCGlobalClass1Gen2).roSpecID(2);
 		spec.accessCommand().accessCommandOpSpec().add(new C1G2Read());
 		spec.accessCommand().airProtocolTagSpec(new C1G2TagSpec().c1G2TargetTag(list(new C1G2TargetTag().mb(1)
-				.tagMask(BitSet.valueOf(new byte[] { 0b1111 })).tagData(BitSet.valueOf(new byte[] { 0b111 })))));
+				.tagMask(new BitList(new byte[] { 0b1111 })).tagData(new BitList(new byte[] { 0b111 })))));
 		spec.accessSpecStopTrigger().accessSpecStopTrigger(AccessSpecStopTriggerType.Null).operationCountValue(1);
 		// spec.custom().add(new ImpinjAccessSpecConfiguration());
 		msg.accessSpec(spec);

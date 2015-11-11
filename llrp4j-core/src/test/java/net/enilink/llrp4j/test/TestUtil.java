@@ -5,7 +5,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -16,6 +15,7 @@ import net.enilink.llrp4j.annotations.LlrpCustomMessageType;
 import net.enilink.llrp4j.annotations.LlrpField;
 import net.enilink.llrp4j.annotations.LlrpMessageType;
 import net.enilink.llrp4j.annotations.LlrpParam;
+import net.enilink.llrp4j.types.BitList;
 
 public class TestUtil {
 	public static <T> T mockObject(T o, Set<Class<?>> classesPool, Random rnd) throws Exception {
@@ -85,10 +85,10 @@ public class TestUtil {
 					break;
 				}
 			}
-		} else if (BitSet.class.equals(c)) {
+		} else if (BitList.class.equals(c)) {
 			byte[] bytes = new byte[rnd.nextInt(5)];
 			rnd.nextBytes(bytes);
-			value = BitSet.valueOf(bytes);
+			value = new BitList(bytes);
 		} else if (BigInteger.class.equals(c)) {
 			value = BigInteger.valueOf(rnd.nextLong());
 		} else if (c.isArray()) {

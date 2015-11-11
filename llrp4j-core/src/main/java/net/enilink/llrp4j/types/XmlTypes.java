@@ -2,7 +2,6 @@ package net.enilink.llrp4j.types;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.BitSet;
 import java.util.GregorianCalendar;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -12,7 +11,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.llrp.ltk.schema.core.FieldFormat;
 import org.llrp.ltk.schema.core.FieldType;
 
-import net.enilink.llrp4j.EncodingUtil;
 import net.enilink.llrp4j.LlrpException;
 
 public class XmlTypes {
@@ -34,8 +32,8 @@ public class XmlTypes {
 			return (String) value;
 		} else if (value instanceof Boolean) {
 			return Boolean.TRUE.equals(value) ? "1" : "0";
-		} else if (value instanceof BitSet) {
-			return toString((BitSet) value, format);
+		} else if (value instanceof BitList) {
+			return toString((BitList) value, format);
 		} else if (value instanceof Number) {
 			Number n = (Number) value;
 			switch (format) {
@@ -89,7 +87,7 @@ public class XmlTypes {
 		throw new IllegalArgumentException("Unknown type: " + value.getClass());
 	}
 
-	private static String toString(BitSet bits, FieldFormat format) {
+	private static String toString(BitList bits, FieldFormat format) {
 		StringBuilder sb = new StringBuilder();
 		int length = bits.length();
 		for (int i = 0; i < length; i++) {
@@ -156,7 +154,7 @@ public class XmlTypes {
 			return Integer.valueOf(s, radix);
 		case U_1_V: {
 			int length = s.trim().length();
-			BitSet result = new BitSet();
+			BitList result = new BitList();
 			for (int i = 0; i < length; i++) {
 				result.set(i, s.charAt(i) != '0');
 			}

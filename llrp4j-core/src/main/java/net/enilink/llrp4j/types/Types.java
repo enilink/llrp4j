@@ -2,7 +2,6 @@ package net.enilink.llrp4j.types;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +19,7 @@ public class Types {
 			buffer.putInt(((Number) value).intValue(), 2);
 			return;
 		case U_1_V:
-			encodeBits((BitSet) value, FieldType.U_1, buffer);
+			encodeBits((BitList) value, FieldType.U_1, buffer);
 			return;
 		case U_8:
 			buffer.putInt(((Number) value).intValue(), 8);
@@ -98,7 +97,7 @@ public class Types {
 		throw new IllegalArgumentException("Unknown type " + fieldType);
 	}
 
-	private static void encodeBits(BitSet bits, FieldType fieldType, BitBuffer buffer) {
+	private static void encodeBits(BitList bits, FieldType fieldType, BitBuffer buffer) {
 		int length = bits.length();
 		buffer.putInt(length, 16);
 		for (int i = 0; i < length; i++) {
@@ -200,8 +199,8 @@ public class Types {
 		throw new IllegalArgumentException("Unknown type " + fieldType);
 	}
 
-	private static BitSet decodeBits(int length, FieldType fieldType, BitBuffer buffer) {
-		BitSet result = new BitSet();
+	private static BitList decodeBits(int length, FieldType fieldType, BitBuffer buffer) {
+		BitList result = new BitList();
 		for (int i = 0; i < length; i++) {
 			result.set(i, buffer.getBoolean());
 		}
@@ -242,7 +241,7 @@ public class Types {
 		case U_2:
 			return int.class;
 		case U_1_V:
-			return BitSet.class;
+			return BitList.class;
 		case U_8:
 			return int.class;
 		case S_8:
