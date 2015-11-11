@@ -48,15 +48,9 @@ public class BitList {
 	public BitList(byte[] bytes) {
 		bits = new BitSet(bytes.length * 8);
 		length = bytes.length * 8;
-
-		// iterate over all bytes
-		for (int i = 0; i < bytes.length; i++) {
-			byte b = bytes[i];
-			int bitPosition = 8 * i;
-			// iterate over each bit of one byte
-			for (int j = 0; j < 8; j++) {
-				bits.set(bitPosition + j, (b & (1 << j)) != 0);
-			}
+		BitBuffer buffer = BitBuffer.wrap(bytes);
+		for (int i = 0; i < length; i++) {
+			bits.set(i, buffer.getBoolean());
 		}
 	}
 
