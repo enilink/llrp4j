@@ -8,10 +8,10 @@
 		<version>1.0.2-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>llrp4j-single-jar</artifactId>
+	<artifactId>llrp4j-distribution</artifactId>
 	<packaging>pom</packaging>
 
-	<name>llrp4j-single-jar</name>
+	<name>llrp4j-distribution</name>
 	<url>http://github.com/enilink/llrp4j</url>
 
 	<build>
@@ -27,6 +27,7 @@
 						</goals>
 						<configuration>
 							<appendAssemblyId>false</appendAssemblyId>
+							<finalName>llrp4j-onejar-${project.version}</finalName>
 							<descriptors>
 								<descriptor>src/assembly/jar-without-dependencies.xml</descriptor>
 							</descriptors>

@@ -111,7 +111,7 @@
 				</plugins>
 			</build>
 			<modules>
-				<module>llrp4j-single-jar</module>
+				<module>llrp4j-distribution</module>
 			</modules>
 		</profile>
 	</profiles>

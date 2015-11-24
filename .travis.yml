@@ -6,7 +6,7 @@ deploy:
     secure: D3RtTNPe5Ve9uUFGbZlWd7UMXCmaQ4Qc5c5vDjr4QHltyLAAy4sEEazE12OTMyq+5feMGAVynG3wJkna/2RQSk0goN93OoKQ8VVqiEcIOCyvZOnHwnIAqpNtZbxYHEKOl1zYqr3nQIj8tCvLhQop/JhLTsMSnXvb0tn7HUXd1AqSoz+Gdq16Tk70WO9potZvVxq+Y6OZXlT93SzIhK9K0krX7kqdPT1Pxcte8z6PMlt6CtU6OM694VxRQPw5/VFHRYFaAaORvis1qGUk2f2OxtwEf0K2IBiIhYEIPoXJa6KX7BBTE1LviRByhdRTVBDLwU9GE+jPcn/CcoMVT/TC8m5E3D8CBc+3bwscKxGRRFsOtvKyWXro4JQiw4h41sWi6hyyFMplggfswWXMhH1sQ+6iZsWnIxsxAADvBckYpuTwbLEvfTY6FSx2KmikH7J1/cxIny/6I9pNzyNPYB8BdhqxCNHPbxlmdwBsPmqOQDD6au46oPEijgduUlMd/M4b9/mG01dTIza+JDYInRGpQvm4ozPTBrlbUq5MDAE+8f6gU0FPU+7MzXrHWIIeb/3oncgShqyy/LCpU+YaJ7q7MN4n8nqcHV1qsS5IP986zdyOqMl8H9UF1R1C5EM6EyR1U3PI3qYEl+C+5XeS9geWDCk0kqmvVwZ1uuGfdCa21RA=
   file_glob: true
   skip_cleanup: true
-  file: llrp4j-single-jar/target/llrp4j-single-jar-*.jar
+  file: llrp4j-distribution/target/llrp4j-onejar-*.jar
   on:
     tags: true
 - provider: script
