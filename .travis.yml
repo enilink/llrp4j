@@ -10,7 +10,7 @@ deploy:
   on:
     tags: true
 - provider: script
-  script: mvn package deploy -s ./.travis.maven-settings.xml -P generator -P release
+  script: mvn deploy -P generator -P release -s ./.travis.maven-settings.xml
   on:
     tags: true
 
