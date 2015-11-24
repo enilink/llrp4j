@@ -23,4 +23,4 @@ esac
 shift # past argument or value
 done
 
-mvn release:prepare -Dtag=v${RELEASEVERSION} -DreleaseVersion=${RELEASEVERSION} -DdevelopmentVersion=${DEVELOPMENTVERSION}-SNAPSHOT -DpushChanges=${PUSHCHANGES}
+mvn release:prepare -P release -P generator -Dtag=v${RELEASEVERSION} -DreleaseVersion=${RELEASEVERSION} -DdevelopmentVersion=${DEVELOPMENTVERSION}-SNAPSHOT -DpushChanges=${PUSHCHANGES}
