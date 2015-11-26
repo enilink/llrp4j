@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.enilink.llrp4j</groupId>
@@ -15,12 +16,34 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
+	<licenses>
+		<license>
+			<name>Eclipse Public License (EPL), Version 1.0</name>
+			<url>http://www.eclipse.org/legal/epl-v10.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
 	<scm>
 		<connection>scm:git:https://github.com/enilink/llrp4j.git</connection>
 		<developerConnection>scm:git:git@github.com:enilink/llrp4j.git</developerConnection>
 		<url>https://github.com/enilink/llrp4j</url>
 		<tag>HEAD</tag>
 	</scm>
+
+	<developers>
+		<developer>
+			<id>kenwenzel</id>
+			<name>Ken Wenzel</name>
+			<email>ken.wenzel@iwu.fraunhofer.de</email>
+			<organization>Fraunhofer IWU</organization>
+			<organizationUrl>http://www.iwu.fraunhofer.de</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+		</developer>
+	</developers>
 
 	<distributionManagement>
 		<repository>
