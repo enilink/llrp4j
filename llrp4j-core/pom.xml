@@ -11,6 +11,7 @@
 	<packaging>jar</packaging>
 
 	<name>llrp4j-core</name>
+	<description>The LLRP4J core module that is independent of actual message and parameter definitions.</description>
 	<url>http://github.com/enilink/llrp4j</url>
 
 	<build>

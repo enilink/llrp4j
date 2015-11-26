@@ -11,6 +11,7 @@
 	<packaging>pom</packaging>
 
 	<name>llrp4j-distribution</name>
+	<description>Distribution project for packaging of LLRP4J modules into a single jar.</description>
 	<url>http://github.com/enilink/llrp4j</url>
 
 	<build>

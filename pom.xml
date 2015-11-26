@@ -7,6 +7,8 @@
 	<version>1.0.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
+	<name>llrp4j-parent</name>
+	<description>A LLRP library for Java.</description>
 	<url>http://github.com/enilink/llrp4j</url>
 
 	<properties>

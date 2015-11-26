@@ -11,6 +11,7 @@
 	<packaging>jar</packaging>
 
 	<name>llrp4j-generator</name>
+	<description>Generator for LLRP message and parameter classes from XML definitions.</description>
 	<url>http://github.com/enilink/llrp4j</url>
 
 	<properties>

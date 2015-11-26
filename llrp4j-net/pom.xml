@@ -11,6 +11,7 @@
 	<packaging>jar</packaging>
 
 	<name>llrp4j-net</name>
+	<description>LLRP client and server based on Java NIO.</description>
 	<url>http://github.com/enilink/llrp4j</url>
 
 	<properties>

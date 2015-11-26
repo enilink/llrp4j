@@ -8,6 +8,7 @@
 	</parent>
 
 	<artifactId>llrp4j-llrp-module</artifactId>
+	<description>A LLRP4J module with messages, parameters and types for the LLRP specification version 1.1.</description>
 	<packaging>jar</packaging>
 
 	<name>llrp4j-llrp-module</name>
