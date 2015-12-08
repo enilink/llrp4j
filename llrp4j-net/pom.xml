@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -8,7 +9,7 @@
 	</parent>
 
 	<artifactId>llrp4j-net</artifactId>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 
 	<name>llrp4j-net</name>
 	<description>LLRP client and server based on Java NIO.</description>
@@ -39,4 +40,27 @@
 			<version>1.0.4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Export-Package>net.enilink.llrp4j.net</Export-Package>
+						<Import-Package>net.enilink.llrp4j,
+							net.enilink.llrp4j.annotations,
+							net.enilink.llrp4j.bitbuffer,
+							net.enilink.llrp4j.types,
+							org.llrp.enumerations,
+							org.llrp.messages,
+							org.llrp.parameters,
+							org.slf4j;version="1.7.2"</Import-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

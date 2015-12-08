@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -8,7 +9,7 @@
 	</parent>
 
 	<artifactId>llrp4j-impinj-module</artifactId>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 
 	<name>llrp4j-impinj-module</name>
 	<description>A LLRP4J module with custom messages, parameters and types for Impinj readers.</description>
@@ -21,7 +22,7 @@
 	</properties>
 
 	<dependencies>
-	<dependency>
+		<dependency>
 			<groupId>net.enilink.llrp4j</groupId>
 			<artifactId>llrp4j-llrp-module</artifactId>
 			<version>1.0.4-SNAPSHOT</version>
@@ -76,4 +77,27 @@
 			</build>
 		</profile>
 	</profiles>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Export-Package>org.llrp.impinj.*</Export-Package>
+						<Import-Package>net.enilink.llrp4j,
+							net.enilink.llrp4j.annotations,
+							net.enilink.llrp4j.types,
+							org.llrp.enumerations,
+							org.llrp.interfaces,
+							org.llrp.ltk.schema.core,
+							org.llrp.messages,
+							org.llrp.parameters</Import-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
