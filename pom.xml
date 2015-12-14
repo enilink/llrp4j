@@ -3,7 +3,7 @@
 
 	<groupId>net.enilink.llrp4j</groupId>
 	<artifactId>llrp4j-parent</artifactId>
-	<version>1.0.5-SNAPSHOT-SNAPSHOT</version>
+	<version>1.0.5-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>llrp4j-parent</name>

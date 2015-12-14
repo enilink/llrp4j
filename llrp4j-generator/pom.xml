@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>net.enilink.llrp4j</groupId>
 		<artifactId>llrp4j-parent</artifactId>
-		<version>1.0.5-SNAPSHOT-SNAPSHOT</version>
+		<version>1.0.5-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>llrp4j-generator</artifactId>
@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>net.enilink.llrp4j</groupId>
 			<artifactId>llrp4j-core</artifactId>
-			<version>1.0.5-SNAPSHOT-SNAPSHOT</version>
+			<version>1.0.5-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.helger</groupId>
