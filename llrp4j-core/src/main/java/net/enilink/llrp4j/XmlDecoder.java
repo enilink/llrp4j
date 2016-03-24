@@ -1,6 +1,5 @@
 package net.enilink.llrp4j;
 
-import static net.enilink.llrp4j.EncodingUtil.decodeEnum;
 import static net.enilink.llrp4j.EncodingUtil.firstUpper;
 import static net.enilink.llrp4j.EncodingUtil.indent;
 import static net.enilink.llrp4j.EncodingUtil.parameterType;
@@ -9,6 +8,7 @@ import static net.enilink.llrp4j.EncodingUtil.typeNum;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,71 +52,106 @@ public class XmlDecoder {
 
 		void parseProperties(Object o, Property[] properties) throws Exception {
 			QName name = next();
-
 			for (int i = 0; i < properties.length; i++) {
 				Property property = properties[i];
 
-				boolean parseProperty = false;
-				Class<?> elementClass = null;
-				if (property.isField) {
-					String expectedName = firstUpper(property.field.getName());
-					if (name != null && name.getLocalPart().equals(expectedName)) {
-						parseProperty = true;
-					}
-				} else {
-					Class<?> expectedClass = propertyType(property.field);
-					elementClass = context.qnameToClass.get(name);
-					if (elementClass != null && expectedClass.isAssignableFrom(elementClass)) {
-						parseProperty = true;
-					}
+				if (logger.isDebugEnabled()) {
+					logger.debug(indent(depth, "decode " + property.field));
+					depth++;
 				}
 
-				if (parseProperty) {
-					if (logger.isDebugEnabled()) {
-						logger.debug(indent(depth, "decode " + property.field));
-						depth++;
-					}
-
-					Object fieldValue;
-					if (property.isField) {
-						fieldValue = parseField(property.field, null);
+				boolean propertyWasRead = false;
+				if (property.isField) {
+					// this is a simple scalar field
+					String expectedName = firstUpper(property.field.getName());
+					if (name != null && name.getLocalPart().equals(expectedName)) {
+						Object fieldValue = parseField(property.field, null);
 						if (property.required && fieldValue == null) {
 							throw new ParseException("Missing content in element " + name);
 						}
 						property.field.set(o, fieldValue);
-					} else {
-						boolean isList = List.class.isAssignableFrom(property.field.getType());
-						fieldValue = parseParameter(elementClass, isList, property.required);
-						if (property.required && (fieldValue == null
+						propertyWasRead = true;
+					} else if (property.required) {
+						unexpected(name);
+					}
+				} else {
+					// this is a parameter object
+					boolean isList = List.class.isAssignableFrom(property.field.getType());
+					List<Object> valueList = null;
+					boolean required = property.required;
+					Class<?> expectedClass = propertyType(property.field);
+
+					Object fieldValue = null;
+					while (true) {
+						Class<?> elementClass = context.qnameToClass.get(name);
+						if (elementClass == null || !expectedClass.isAssignableFrom(elementClass)) {
+							// reset read flag in case of lists
+							propertyWasRead = false;
+							if (required) {
+								unexpected(name);
+							}
+							break;
+						}
+
+						propertyWasRead = true;
+						fieldValue = parseParameter(elementClass, isList, required);
+						if (required && (fieldValue == null
 								|| fieldValue instanceof List && ((List<?>) fieldValue).isEmpty())) {
 							unexpected(name);
 						}
-						if (isList && !(fieldValue instanceof List)) {
-							@SuppressWarnings("unchecked")
-							List<Object> list = (List<Object>) property.field.get(o);
-							if (list == null) {
-								list = new ArrayList<>();
-								property.field.set(o, list);
+						if (isList) {
+							if (valueList == null) {
+								valueList = new ArrayList<>();
 							}
-							list.add(fieldValue);
+							if (fieldValue instanceof List) {
+								valueList.addAll((List<?>) fieldValue);
+							} else {
+								valueList.add(fieldValue);
+							}
+							// at least one parameter value was already read
+							required = false;
+
+							end();
+							name = next();
 						} else {
-							property.field.set(o, fieldValue);
+							// read only one parameter
+							break;
 						}
 					}
-
-					if (logger.isDebugEnabled()) {
-						depth--;
-						logger.debug(indent(depth, "decoded " + property.field));
+					if (isList) {
+						fieldValue = valueList;
 					}
+					if (fieldValue != null) {
+						property.field.set(o, fieldValue);
+					}
+				}
 
+				if (logger.isDebugEnabled()) {
+					depth--;
+					logger.debug(indent(depth, "decoded " + property.field));
+				}
+
+				if (propertyWasRead) {
 					end();
 					name = next();
-				} else if (property.required) {
-					unexpected(name);
 				}
 			}
 			if (name != null) {
 				useCurrentAsNext();
+			}
+		}
+
+		private Object stringToEnum(Class<?> enumClass, boolean isList, String value) throws Exception {
+			Method valueOf = enumClass.getDeclaredMethod("valueOf", String.class);
+			if (isList) {
+				String[] elements = value.split("\\s*,\\s*");
+				List<Object> enumValues = new ArrayList<>(elements.length);
+				for (int i = 0; i < elements.length; i++) {
+					enumValues.add(valueOf.invoke(null, elements[i]));
+				}
+				return enumValues;
+			} else {
+				return valueOf.invoke(null, value);
 			}
 		}
 
@@ -128,10 +163,12 @@ public class XmlDecoder {
 				value = parseStringValue();
 			}
 			if (value.length() > 0) {
-				Object javaValue = XmlTypes.fromString(type, annotation.format(), value);
 				Class<?> elementType = propertyType(field);
+				Object javaValue;
 				if (LlrpEnum.class.isAssignableFrom(elementType)) {
-					javaValue = decodeEnum(elementType, javaValue);
+					javaValue = stringToEnum(elementType, List.class.isAssignableFrom(field.getType()), value);
+				} else {
+					javaValue = XmlTypes.fromString(type, annotation.format(), value);
 				}
 				return javaValue;
 			}

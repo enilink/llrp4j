@@ -11,6 +11,7 @@ import static net.enilink.llrp4j.EncodingUtil.typeNum;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -132,12 +133,27 @@ public class XmlEncoder {
 		}
 	}
 
+	private String enumToString(Object value) {
+		if (value instanceof List<?>) {
+			StringBuilder sb = new StringBuilder();
+			for (Iterator<?> it = ((List<?>) value).iterator(); it.hasNext();) {
+				LlrpEnum element = (LlrpEnum) it.next();
+				sb.append(element.name());
+				if (it.hasNext()) {
+					sb.append(" ");
+				}
+			}
+			return sb.toString();
+		} else {
+			return ((LlrpEnum) value).name();
+		}
+	}
+
 	private String encodeField(Field field, Object value, String namespace, XMLStreamWriter writer) throws Exception {
 		LlrpField annotation = field.getAnnotation(LlrpField.class);
-		FieldType type = annotation.type();
 		if (value instanceof LlrpEnum
 				|| (value instanceof List<?> && LlrpEnum.class.isAssignableFrom(propertyType(field)))) {
-			value = encodeEnum(type, value);
+			value = enumToString(value);
 		}
 		String fieldName = firstUpper(field.getName());
 		String fieldValue = XmlTypes.toString(value, annotation.format());

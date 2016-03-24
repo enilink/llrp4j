@@ -74,46 +74,57 @@ public class TestUtil {
 			}
 		}
 
-		Object value = null;
-		if (c.isEnum()) {
-			Object[] constants = c.getEnumConstants();
-			value = constants[rnd.nextInt(constants.length)];
-		} else if (c.isInterface()) {
-			for (Class<?> candidate : classesPool) {
-				if (c.isAssignableFrom(candidate)) {
-					value = candidate.newInstance();
-					break;
-				}
-			}
-		} else if (BitList.class.equals(c)) {
-			byte[] bytes = new byte[rnd.nextInt(5)];
-			rnd.nextBytes(bytes);
-			value = new BitList(bytes);
-		} else if (BigInteger.class.equals(c)) {
-			value = BigInteger.valueOf(rnd.nextLong());
-		} else if (c.isArray()) {
-			if (byte[].class.equals(c)) {
-				byte[] bytes = new byte[rnd.nextInt(5) + 1];
-				rnd.nextBytes(bytes);
-				value = bytes;
-			} else {
-				value = Array.newInstance(c.getComponentType(), 0);
-			}
-		} else {
-			value = c.newInstance();
-		}
-		if (value == null) {
-			throw new IllegalArgumentException("Cannot instantiate class: " + c);
-		}
-		if (!value.getClass().isArray()
-				&& !(value instanceof Number || value instanceof String || value instanceof Boolean)) {
-			mockObject(value, classesPool, rnd);
-		}
+		int count = 1;
 		if (list != null) {
-			list.add(value);
-			return list;
+			// add more than one element to list
+			count = 1 + rnd.nextInt(5);
 		}
-		return value;
+
+		while (true) {
+			Object value = null;
+			if (c.isEnum()) {
+				Object[] constants = c.getEnumConstants();
+				value = constants[rnd.nextInt(constants.length)];
+			} else if (c.isInterface()) {
+				for (Class<?> candidate : classesPool) {
+					if (c.isAssignableFrom(candidate)) {
+						value = candidate.newInstance();
+						break;
+					}
+				}
+			} else if (BitList.class.equals(c)) {
+				byte[] bytes = new byte[rnd.nextInt(5)];
+				rnd.nextBytes(bytes);
+				value = new BitList(bytes);
+			} else if (BigInteger.class.equals(c)) {
+				value = BigInteger.valueOf(rnd.nextLong());
+			} else if (c.isArray()) {
+				if (byte[].class.equals(c)) {
+					byte[] bytes = new byte[rnd.nextInt(5) + 1];
+					rnd.nextBytes(bytes);
+					value = bytes;
+				} else {
+					value = Array.newInstance(c.getComponentType(), 0);
+				}
+			} else {
+				value = c.newInstance();
+			}
+			if (value == null) {
+				throw new IllegalArgumentException("Cannot instantiate class: " + c);
+			}
+			if (!value.getClass().isArray()
+					&& !(value instanceof Number || value instanceof String || value instanceof Boolean)) {
+				mockObject(value, classesPool, rnd);
+			}
+			if (list != null) {
+				list.add(value);
+				if (count-- == 0) {
+					return list;
+				}
+			} else {
+				return value;
+			}
+		}
 	}
 
 	public static Class<?> responseType(Class<?> msgClass) {

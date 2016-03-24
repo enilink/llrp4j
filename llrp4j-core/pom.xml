@@ -19,7 +19,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.6</version>
 				<executions>
 					<execution>
 						<goals>
@@ -40,7 +39,7 @@
 							net.enilink.llrp4j.types,
 							net.enilink.llrp4j.xml,
 							org.llrp.ltk.schema.core</Export-Package>
-						<Import-Package>org.slf4j;version="1.7.2"</Import-Package>
+						<Import-Package>org.slf4j;version="1.7.2",*</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>

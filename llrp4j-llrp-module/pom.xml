@@ -80,10 +80,7 @@
 				<configuration>
 					<instructions>
 						<Export-Package>org.llrp.*</Export-Package>
-						<Import-Package>net.enilink.llrp4j,
-							net.enilink.llrp4j.annotations,
-							net.enilink.llrp4j.types,
-							org.llrp.ltk.schema.core</Import-Package>
+						<Import-Package>*</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>

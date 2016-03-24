@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<llrp:ADD_ROSPEC xmlns:llrp="http://www.llrp.org/ltk/schema/core/encoding/xml/1.0" xmlns:Impinj="http://developer.impinj.com/ltk/schema/encoding/xml/1.0" Version="1" MessageID="4">
+  <llrp:ROSpec>
+    <llrp:ROSpecID>1</llrp:ROSpecID>
+    <llrp:Priority>0</llrp:Priority>
+    <llrp:CurrentState>Disabled</llrp:CurrentState>
+    <llrp:ROBoundarySpec>
+      <llrp:ROSpecStartTrigger>
+        <llrp:ROSpecStartTriggerType>Null</llrp:ROSpecStartTriggerType>
+      </llrp:ROSpecStartTrigger>
+      <llrp:ROSpecStopTrigger>
+        <llrp:ROSpecStopTriggerType>Null</llrp:ROSpecStopTriggerType>
+        <llrp:DurationTriggerValue>0</llrp:DurationTriggerValue>
+      </llrp:ROSpecStopTrigger>
+    </llrp:ROBoundarySpec>
+    <llrp:AISpec>
+      <llrp:AntennaIDs>0</llrp:AntennaIDs>
+      <llrp:AISpecStopTrigger>
+        <llrp:AISpecStopTriggerType>Null</llrp:AISpecStopTriggerType>
+        <llrp:DurationTrigger>0</llrp:DurationTrigger>
+      </llrp:AISpecStopTrigger>
+      <llrp:InventoryParameterSpec>
+        <llrp:InventoryParameterSpecID>9</llrp:InventoryParameterSpecID>
+        <llrp:ProtocolID>EPCGlobalClass1Gen2</llrp:ProtocolID>
+      </llrp:InventoryParameterSpec>
+    </llrp:AISpec>
+  </llrp:ROSpec>
+</llrp:ADD_ROSPEC>

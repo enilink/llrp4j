@@ -86,14 +86,7 @@
 				<configuration>
 					<instructions>
 						<Export-Package>org.llrp.impinj.*</Export-Package>
-						<Import-Package>net.enilink.llrp4j,
-							net.enilink.llrp4j.annotations,
-							net.enilink.llrp4j.types,
-							org.llrp.enumerations,
-							org.llrp.interfaces,
-							org.llrp.ltk.schema.core,
-							org.llrp.messages,
-							org.llrp.parameters</Import-Package>
+						<Import-Package>*</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>

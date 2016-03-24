@@ -49,14 +49,7 @@
 				<configuration>
 					<instructions>
 						<Export-Package>net.enilink.llrp4j.net</Export-Package>
-						<Import-Package>net.enilink.llrp4j,
-							net.enilink.llrp4j.annotations,
-							net.enilink.llrp4j.bitbuffer,
-							net.enilink.llrp4j.types,
-							org.llrp.enumerations,
-							org.llrp.messages,
-							org.llrp.parameters,
-							org.slf4j;version="1.7.2"</Import-Package>
+						<Import-Package>org.slf4j;version="1.7.2", *</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
