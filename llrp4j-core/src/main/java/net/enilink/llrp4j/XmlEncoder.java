@@ -1,6 +1,5 @@
 package net.enilink.llrp4j;
 
-import static net.enilink.llrp4j.EncodingUtil.encodeEnum;
 import static net.enilink.llrp4j.EncodingUtil.firstUpper;
 import static net.enilink.llrp4j.EncodingUtil.indent;
 import static net.enilink.llrp4j.EncodingUtil.parameterType;
@@ -18,7 +17,6 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.llrp.ltk.schema.core.FieldType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
