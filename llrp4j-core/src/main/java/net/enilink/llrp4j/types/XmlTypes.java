@@ -149,7 +149,7 @@ public class XmlTypes {
 		int radix = format == FieldFormat.HEX ? 16 : 10;
 		switch (fieldType) {
 		case U_1:
-			return new Boolean(s);
+			return "1".equals(s) ? Boolean.TRUE : Boolean.valueOf(s);
 		case U_2:
 			return Integer.valueOf(s, radix);
 		case U_1_V: {
