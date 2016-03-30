@@ -86,7 +86,7 @@
 				<configuration>
 					<instructions>
 						<Export-Package>org.llrp.impinj.*</Export-Package>
-						<Import-Package>*</Import-Package>
+						<Import-Package>!org.llrp.impinj.*, *</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
