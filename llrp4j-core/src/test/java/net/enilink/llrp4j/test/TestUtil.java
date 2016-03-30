@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import org.llrp.ltk.schema.core.FieldFormat;
 import org.llrp.ltk.schema.core.FieldType;
 
 import net.enilink.llrp4j.annotations.LlrpCustomMessageType;
@@ -19,7 +20,9 @@ import net.enilink.llrp4j.types.BitList;
 
 public class TestUtil {
 	public static <T> T mockObject(T o, Set<Class<?>> classesPool, Random rnd) throws Exception {
-		if (o instanceof List<?>) {
+		if (o.getClass().isArray() || (o instanceof Number || o instanceof String || o instanceof Boolean)) {
+			return o;
+		} else if (o instanceof List<?>) {
 			for (Object element : (List<?>) o) {
 				mockObject(element, classesPool, rnd);
 			}
@@ -40,6 +43,9 @@ public class TestUtil {
 							value = rnd.nextBoolean();
 						}
 						// TODO implement more types
+					} else if (fieldAnn.type() == FieldType.U_64 && fieldAnn.format() == FieldFormat.DATETIME) {
+						// TODO check what is wrong with dates in the XML encoding
+						value = BigInteger.valueOf(Math.abs((long)rnd.nextInt() * (long)10e6));
 					} else {
 						value = createValue(f, classesPool, rnd);
 						if (value instanceof BigInteger && fieldAnn.type().name().startsWith("U")) {
@@ -93,7 +99,7 @@ public class TestUtil {
 					}
 				}
 			} else if (BitList.class.equals(c)) {
-				byte[] bytes = new byte[rnd.nextInt(5)];
+				byte[] bytes = new byte[1 + rnd.nextInt(5)];
 				rnd.nextBytes(bytes);
 				value = new BitList(bytes);
 			} else if (BigInteger.class.equals(c)) {
@@ -104,18 +110,30 @@ public class TestUtil {
 					rnd.nextBytes(bytes);
 					value = bytes;
 				} else {
-					value = Array.newInstance(c.getComponentType(), 0);
+					int length = rnd.nextInt(5) + 1;
+					Class<?> componentType = c.getComponentType();
+					value = Array.newInstance(componentType, length);
+					if (!componentType.isPrimitive()) {
+						for (int i = 0; i < length; i++) {
+							Object element = componentType.newInstance();
+							Array.set(value, i, mockObject(element, classesPool, rnd));
+						}
+					}
 				}
 			} else {
-				value = c.newInstance();
+				if (String.class.isAssignableFrom(c)) {
+					// create a random string with some content
+					value = new BigInteger(130, rnd).toString(32);
+				} else {
+					value = c.newInstance();
+				}
 			}
 			if (value == null) {
 				throw new IllegalArgumentException("Cannot instantiate class: " + c);
 			}
-			if (!value.getClass().isArray()
-					&& !(value instanceof Number || value instanceof String || value instanceof Boolean)) {
-				mockObject(value, classesPool, rnd);
-			}
+
+			mockObject(value, classesPool, rnd);
+
 			if (list != null) {
 				list.add(value);
 				if (count-- == 0) {

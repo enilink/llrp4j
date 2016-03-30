@@ -3,6 +3,7 @@ package net.enilink.llrp4j.types;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -38,30 +39,29 @@ public class XmlTypes {
 			Number n = (Number) value;
 			switch (format) {
 			case DATETIME:
-				BigInteger bigint;
+				BigInteger timestampUTC;
 				if (n instanceof BigInteger) {
-					bigint = (BigInteger) n;
+					timestampUTC = (BigInteger) n;
 				} else {
-					bigint = BigInteger.valueOf(n.longValue());
+					timestampUTC = BigInteger.valueOf(n.longValue());
 				}
-				GregorianCalendar cal = new GregorianCalendar();
+				// TimeZone timezone = TimeZone.getDefault();
+				// TODO Always use UTC here?
+				TimeZone timezone = TimeZone.getTimeZone("UTC");
+				GregorianCalendar cal = new GregorianCalendar(timezone);
 
 				// initialize calendar after removing the last
 				// three digits that represent microseconds
-				final long milliseconds = bigint.divide(BigInteger.valueOf(1000)).longValue();
-				cal.setTimeInMillis(milliseconds);
+				BigInteger[] millisAndMicros = timestampUTC.divideAndRemainder(BigInteger.valueOf(1000));
+				cal.setTimeInMillis(millisAndMicros[0].longValue());
 
-				StringBuilder sb = new StringBuilder();
 				DatatypeFactory df = datatypeFactory();
 				XMLGregorianCalendar xmlcal = df.newXMLGregorianCalendar(cal);
-				sb.append(xmlcal.toXMLFormat());
 
-				int indexOfT = sb.indexOf("T");
-				int l = value.toString().length();
-				String microseconds = value.toString().substring(l - 3, l);
-				sb.insert(indexOfT + 13, microseconds);
+				xmlcal.setFractionalSecond(
+						xmlcal.getFractionalSecond().add(new BigDecimal(millisAndMicros[1]).movePointLeft(6)));
 
-				return sb.toString();
+				return xmlcal.toXMLFormat();
 			case HEX:
 				if (n instanceof BigInteger) {
 					return ((BigInteger) n).toString(16);
@@ -133,17 +133,15 @@ public class XmlTypes {
 		if (format == FieldFormat.DATETIME && fieldType == FieldType.U_64) {
 			DatatypeFactory df = datatypeFactory();
 			XMLGregorianCalendar cal = df.newXMLGregorianCalendar(s);
-			// scale value to microseconds the last three digits
-			// ("microseconds") are "000" at this stage
-			BigInteger value = BigInteger.valueOf(cal.toGregorianCalendar().getTimeInMillis() * 1000);
+			BigDecimal fractional = cal.getFractionalSecond();
+			cal.setFractionalSecond(BigDecimal.ZERO);
 
-			// compute microseconds value by subtracting milliseconds from
-			// return value of XMLGregorianCalendar.getFractionalSecond()
-			BigDecimal millisec = cal.getFractionalSecond().setScale(3, BigDecimal.ROUND_DOWN);
-			BigDecimal microsec = (cal.getFractionalSecond().setScale(6, BigDecimal.ROUND_DOWN)).subtract(millisec);
+			BigInteger value = BigInteger.valueOf(cal.toGregorianCalendar().getTimeInMillis());
 
-			// add microseconds
-			value = value.add(microsec.movePointRight(6).toBigInteger());
+			// scale to microseconds
+			value = value.multiply(BigInteger.valueOf(1000));
+			value = value.add(fractional.movePointRight(6).toBigInteger());
+
 			return value;
 		}
 		int radix = format == FieldFormat.HEX ? 16 : 10;

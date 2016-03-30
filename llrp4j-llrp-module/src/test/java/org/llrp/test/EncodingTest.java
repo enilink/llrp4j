@@ -2,6 +2,7 @@ package org.llrp.test;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +17,8 @@ import org.junit.Test;
 import org.llrp.enumerations.AccessSpecState;
 import org.llrp.enumerations.AccessSpecStopTriggerType;
 import org.llrp.enumerations.AirProtocols;
+import org.llrp.ltk.schema.core.FieldFormat;
+import org.llrp.ltk.schema.core.FieldType;
 import org.llrp.messages.ADD_ACCESSSPEC;
 import org.llrp.modules.LlrpModule;
 import org.llrp.parameters.AccessSpec;
@@ -31,6 +34,7 @@ import net.enilink.llrp4j.XmlEncoder;
 import net.enilink.llrp4j.bitbuffer.BitBuffer;
 import net.enilink.llrp4j.types.BitList;
 import net.enilink.llrp4j.types.LlrpMessage;
+import net.enilink.llrp4j.types.XmlTypes;
 import net.enilink.llrp4j.xml.IndentingXMLStreamWriter;
 
 public class EncodingTest {
@@ -93,5 +97,24 @@ public class EncodingTest {
 
 		Assert.assertEquals(msg, msg2);
 		Assert.assertEquals(xml, toXml(ctx, msg2));
+	}
+
+	@Test
+	public void testXmlDatetime() {
+		BigInteger time = BigInteger.valueOf(123456789);
+		String timeStr = XmlTypes.toString(time, FieldFormat.DATETIME);
+
+		BigInteger time2 = (BigInteger) XmlTypes.fromString(FieldType.U_64, FieldFormat.DATETIME, timeStr);
+
+		Assert.assertEquals(time, time2);
+	}
+
+	@Test
+	public void testXmlDatetimeFromString() throws Exception {
+		String timeStr = "2011-01-29T05:53:13.417482Z";
+		BigInteger time = (BigInteger) XmlTypes.fromString(FieldType.U_64, FieldFormat.DATETIME, timeStr);
+		String timeStr2 = XmlTypes.toString(time, FieldFormat.DATETIME);
+
+		Assert.assertEquals(timeStr, timeStr2);
 	}
 }

@@ -188,11 +188,17 @@ public class XmlEncoder {
 	private void encodeTVParameter(Annotation parameterType, Object parameter, XMLStreamWriter writer)
 			throws Exception {
 		Property[] properties = properties(parameterType, context);
-		boolean inlineField = properties.length == 1;
+		// boolean inlineField = properties.length == 1;
+
 		String namespace = context.xmlNamespace(parameter.getClass());
-		for (Property property : properties(parameterType, context)) {
+		for (Property property : properties) {
 			Object fieldValue = property.field.get(parameter);
-			encodeField(property.field, fieldValue, namespace, inlineField ? null : writer);
+
+			// String encoded = encodeField(property.field, fieldValue,
+			// namespace, inlineField ? null : writer);
+			// writer.writeCharacters(encoded);
+
+			encodeField(property.field, fieldValue, namespace, writer);
 		}
 	}
 
