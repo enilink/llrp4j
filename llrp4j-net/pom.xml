@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>net.enilink.llrp4j</groupId>
 		<artifactId>llrp4j-parent</artifactId>
-		<version>1.0.6</version>
+		<version>1.0.7-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>llrp4j-net</artifactId>
@@ -24,19 +24,19 @@
 		<dependency>
 			<groupId>net.enilink.llrp4j</groupId>
 			<artifactId>llrp4j-core</artifactId>
-			<version>1.0.6</version>
+			<version>1.0.7-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.enilink.llrp4j</groupId>
 			<artifactId>llrp4j-core</artifactId>
-			<version>1.0.6</version>
+			<version>1.0.7-SNAPSHOT</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>net.enilink.llrp4j</groupId>
 			<artifactId>llrp4j-llrp-module</artifactId>
-			<version>1.0.6</version>
+			<version>1.0.7-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
