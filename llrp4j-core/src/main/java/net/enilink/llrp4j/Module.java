@@ -42,6 +42,7 @@ public class Module {
 
 	public Module include(Module other) {
 		this.classes.addAll(other.classes);
+		this.namespaces.putAll(other.namespaces);
 		return this;
 	}
 
