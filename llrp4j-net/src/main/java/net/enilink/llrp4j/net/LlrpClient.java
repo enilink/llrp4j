@@ -16,7 +16,12 @@ public class LlrpClient implements Closeable {
 		handler = createHandler(context);
 		nioClient = new NioClient(InetAddress.getByName(host), port, handler, timeout);
 		new Thread(nioClient).start();
-		handler.awaitConnectionAttemptEvent(timeout);
+		try {
+			handler.awaitConnectionAttemptEvent(timeout);
+		} catch(RuntimeException ex) {
+			nioClient.close();
+			throw ex;
+		}
 	}
 
 	private IoHandler createHandler(LlrpContext context) {
