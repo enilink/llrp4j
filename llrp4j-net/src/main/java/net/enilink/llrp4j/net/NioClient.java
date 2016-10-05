@@ -232,10 +232,14 @@ class NioClient implements Runnable, AutoCloseable {
 	}
 
 	public void close() throws IOException {
-		if (channel != null) {
-			channel.close();
-			channel = null;
+		try {
+			if (channel != null) {
+				channel.close();
+				channel = null;
+			}
+		} finally {
+			// Closing the selector exits the client loop thread 
+			selector.close();
 		}
-		selector.close();
 	}
 }
