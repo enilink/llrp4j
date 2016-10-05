@@ -232,7 +232,7 @@ class NioClient implements Runnable, AutoCloseable {
 	}
 
 	public void close() throws IOException {
-	  try {
+		try {
 			if (channel != null) {
 				channel.close();
 				channel = null;
