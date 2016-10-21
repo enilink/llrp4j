@@ -190,15 +190,17 @@ class NioClient implements Runnable, AutoCloseable {
 
 	private SocketChannel initConnection(boolean connectBlocking, int timeout) throws IOException {
 		SocketChannel socketChannel = SocketChannel.open();
-		if (!connectBlocking) {
-			socketChannel.configureBlocking(false);
-		} else {
-			socketChannel.socket().setSoTimeout(timeout);
-		}
+		socketChannel.configureBlocking(connectBlocking);
 
 		// Kick off connection establishment
 		try {
-			socketChannel.connect(new InetSocketAddress(this.hostAddress, this.port));
+			if (connectBlocking) {
+				// When in blocking mode, call connect on the underlying socket
+				// to be able to specify connection timeout.
+				socketChannel.socket().connect(new InetSocketAddress(this.hostAddress, this.port), timeout);
+			} else {
+				socketChannel.connect(new InetSocketAddress(this.hostAddress, this.port));
+			}
 		} catch (IOException e) {
 			socketChannel.close();
 			throw e;
