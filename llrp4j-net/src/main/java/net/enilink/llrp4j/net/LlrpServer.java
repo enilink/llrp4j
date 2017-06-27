@@ -82,7 +82,7 @@ public class LlrpServer implements Closeable {
 		return transact(message, LlrpConstants.DEFAULT_TIMEOUT);
 	}
 
-	public LlrpServer setEndpoint(LlrpEndpoint endpoint) {
+	public LlrpServer endpoint(LlrpEndpoint endpoint) {
 		handler.setEndpoint(endpoint);
 		return this;
 	}
