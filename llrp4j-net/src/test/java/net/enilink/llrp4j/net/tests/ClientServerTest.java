@@ -1,14 +1,10 @@
 package net.enilink.llrp4j.net.tests;
 
-import static net.enilink.llrp4j.test.TestUtil.mockObject;
-import static net.enilink.llrp4j.test.TestUtil.responseType;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
+import net.enilink.llrp4j.LlrpContext;
+import net.enilink.llrp4j.net.LlrpClient;
+import net.enilink.llrp4j.net.LlrpEndpoint;
+import net.enilink.llrp4j.net.LlrpServer;
+import net.enilink.llrp4j.types.LlrpMessage;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llrp.messages.READER_EVENT_NOTIFICATION;
@@ -16,11 +12,14 @@ import org.llrp.modules.LlrpModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.enilink.llrp4j.LlrpContext;
-import net.enilink.llrp4j.net.LlrpClient;
-import net.enilink.llrp4j.net.LlrpEndpoint;
-import net.enilink.llrp4j.net.LlrpServer;
-import net.enilink.llrp4j.types.LlrpMessage;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+import static net.enilink.llrp4j.test.TestUtil.mockObject;
+import static net.enilink.llrp4j.test.TestUtil.responseType;
 
 public class ClientServerTest {
 	final static Logger log = LoggerFactory.getLogger(ClientServerTest.class);
@@ -74,7 +73,7 @@ public class ClientServerTest {
 			}
 		};
 
-		server.setEndpoint(serverEndpoint);
+		server.endpoint(serverEndpoint);
 
 		LlrpEndpoint clientEndpoint = new LlrpEndpoint() {
 			@Override
