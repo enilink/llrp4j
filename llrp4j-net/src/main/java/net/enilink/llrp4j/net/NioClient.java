@@ -3,6 +3,7 @@ package net.enilink.llrp4j.net;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -120,7 +121,7 @@ class NioClient implements Runnable, AutoCloseable {
 		SocketChannel socketChannel = (SocketChannel) key.channel();
 
 		// Clear out our read buffer so it's ready for new data
-		this.readBuffer.clear();
+		((Buffer)this.readBuffer).clear();
 
 		// Attempt to read off the channel
 		int numRead;
