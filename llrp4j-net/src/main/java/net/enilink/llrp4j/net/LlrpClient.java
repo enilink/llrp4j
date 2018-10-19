@@ -39,7 +39,7 @@ public class LlrpClient implements Closeable {
 	}
 
 	public static LlrpClient create(LlrpContext context, String host, int port) throws IOException {
-		return create(context, host, LlrpConstants.DEFAULT_PORT, LlrpConstants.DEFAULT_TIMEOUT);
+		return create(context, host, port, LlrpConstants.DEFAULT_TIMEOUT);
 	}
 
 	public static LlrpClient create(LlrpContext context, String host, int port, int timeout) throws IOException {
